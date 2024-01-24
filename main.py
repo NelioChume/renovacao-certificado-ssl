@@ -2,6 +2,7 @@ from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from datetime import datetime, timedelta
 import os
+from dotenv import load_dotenv
 
 load_dotenv()
 cert_path = os.getenv("FILE_PATH")
@@ -19,8 +20,6 @@ def days_until_expiry(cert_path):
     return days_remaining
 
 if __name__ == "__main__":
-    # Substitua 'caminho/para/seu/certificado.pem' pelo caminho do seu certificado
-    # cert_path = 'caminho/para/seu/certificado.pem'
 
     try:
         remaining_days = days_until_expiry(cert_path)

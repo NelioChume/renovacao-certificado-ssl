@@ -26,10 +26,14 @@ def days_until_expiry(cert_path):
 def renew_certificates():
     try:
         result = subprocess.run([certbot, "renew", "--quiet"], capture_output=True)
-        if b"Certificate not yet due for renewal" in result.stdout:
+        output = result.stdout.decode("utf-8")
+
+        if "Cert not yet due for renewal" in output:
             print("Os certificados não precisam ser renovados neste momento.")
-        else:
+        elif "Cert not yet due for renewal" not in output and "Congratulations, all renewals succeeded" in output:
             print("Renovação bem-sucedida!")
+        else:
+            print("Erro ao renovar certificados. Verifique a saída do Certbot.")
     except Exception as e:
         print(f"Erro ao renovar certificados: {e}")
 

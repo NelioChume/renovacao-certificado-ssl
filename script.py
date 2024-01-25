@@ -6,7 +6,10 @@ from dotenv import load_dotenv
 import subprocess
 
 load_dotenv()
-caminho_base = "/etc/letsencrypt/live/"
+
+# Obtenha os caminhos do arquivo e do Certbot do arquivo .env
+caminho_base = os.getenv("FILE_PATH")
+certbot = os.getenv("CERTBOT_PATH")
 
 def days_until_expiry(cert_path):
     with open(cert_path, 'rb') as cert_file:
@@ -22,8 +25,11 @@ def days_until_expiry(cert_path):
 
 def renew_certificates():
     try:
-        subprocess.run(["certbot", "renew", "--quiet"])
-        print("Renovação bem-sucedida!")
+        result = subprocess.run([certbot, "renew", "--quiet"], capture_output=True)
+        if b"Certificate not yet due for renewal" in result.stdout:
+            print("Os certificados não precisam ser renovados neste momento.")
+        else:
+            print("Renovação bem-sucedida!")
     except Exception as e:
         print(f"Erro ao renovar certificados: {e}")
 

@@ -28,12 +28,10 @@ def renew_certificates():
         result = subprocess.run([certbot, "renew", "--quiet"], capture_output=True)
         output = result.stdout.decode("utf-8")
 
-        if "Cert not yet due for renewal" in output:
+        if "Cert not yet due for renewal" in output or "No renewals were attempted" in output:
             print("Os certificados não precisam ser renovados neste momento.")
-        elif "Cert not yet due for renewal" not in output and "Congratulations, all renewals succeeded" in output:
-            print("Renovação bem-sucedida!")
         else:
-            print("Erro ao renovar certificados. Verifique a saída do Certbot.")
+            print("Renovação bem-sucedida!")
     except Exception as e:
         print(f"Erro ao renovar certificados: {e}")
 

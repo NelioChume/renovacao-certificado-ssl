@@ -6,6 +6,5 @@ for diretorio in os.listdir(caminho_base):
     caminho_completo = os.path.join(caminho_base, diretorio, "fullchain.pem")
     
     if os.path.exists(caminho_completo):
-        print(f"O arquivo fullchain.pem foi encontrado em {caminho_completo}")
-    else:
-        print(f"O arquivo fullchain.pem não foi encontrado em {caminho_completo}")
+        path_base = f"{caminho_base}{diretorio}/"
+        print(f"O arquivo fullchain.pem foi encontrado em {path_base}")

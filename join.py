@@ -1,56 +1,29 @@
 import os
-from dotenv import load_dotenv
 import subprocess
-from OpenSSL import crypto
 from datetime import datetime, timedelta
 
-load_dotenv()
+# Função para verificar a validade do certificado
+def verificar_validade_certificado(caminho_certificado):
+    comando = f"openssl x509 -enddate -noout -in {caminho_certificado}"
+    resultado = subprocess.run(comando, shell=True, capture_output=True, text=True)
+    data_fim = resultado.stdout.replace('notAfter=', '', 1)
+    data_fim = datetime.strptime(data_fim.strip(), '%b %d %H:%M:%S %Y %Z')
+    return data_fim
 
-# Obtenha os caminhos do arquivo e do Certbot do arquivo .env
-caminho_base = os.getenv("FILE_PATH")
-certbot = os.getenv("CERTBOT_PATH")
+# Diretório onde os certificados Let's Encrypt estão localizados
+diretorio_letsencrypt = "/etc/letsencrypt/live"
 
-def days_until_expiry(cert_path):
-    with open(cert_path, 'rb') as cert_file:
-        cert_data = cert_file.read()
+# Obter todos os diretórios dentro de /etc/letsencrypt/live
+diretorios = [diretorio for diretorio in os.listdir(diretorio_letsencrypt) if os.path.isdir(os.path.join(diretorio_letsencrypt, diretorio))]
 
-    cert = crypto.load_certificate(crypto.FILETYPE_PEM, cert_data)
-    expiration_date = datetime.strptime(cert.get_notAfter().decode(), "%Y%m%d%H%M%SZ")
-
-    current_date = datetime.utcnow()
-    days_remaining = (expiration_date - current_date).days
-
-    return days_remaining
-
-def renew_certificates():
-    try:
-        result = subprocess.run([certbot, "renew", "--quiet"], capture_output=True, text=True)
-        output = result.stdout
-        error_output = result.stderr
-
-        if "Cert not yet due for renewal" in output or "No renewals were attempted" in output:
-            print("Os certificados não precisam ser renovados neste momento.")
-        elif "Congratulations, all renewals succeeded" in output:
-            print("Renovação bem-sucedida!")
-        else:
-            print("Erro ao renovar certificados. Saída do Certbot:")
-            print(output)
-            print("Saída de erro do Certbot:")
-            print(error_output)
-    except Exception as e:
-        print(f"Erro ao renovar certificados: {e}")
-
-if __name__ == "__main__":
-    for diretorio in os.listdir(caminho_base):
-        caminho_completo = os.path.join(caminho_base, diretorio, "fullchain.pem")
-
-        if os.path.exists(caminho_completo):
-            try:
-                remaining_days = days_until_expiry(caminho_completo)
-                print(f"O certificado em {caminho_completo} expira em {remaining_days} dias.")
-                
-                # Se restarem menos de 30 dias, renovar automaticamente
-                if remaining_days < 30:
-                    renew_certificates()
-            except Exception as e:
-                print(f"Erro ao processar o certificado em {caminho_completo}: {e}")
+# Loop através de cada diretório
+for diretorio in diretorios:
+    if diretorio.endswith('.org'):
+        caminho_certificado = os.path.join(diretorio_letsencrypt, diretorio, "fullchain.pem")
+        if os.path.exists(caminho_certificado):
+            data_atual = datetime.now()
+            data_fim_validade = verificar_validade_certificado(caminho_certificado)
+            dias_restantes = (data_fim_validade - data_atual).days
+            if dias_restantes <= 15:
+                print(f"Renovando certificado em {os.path.join(diretorio_letsencrypt, diretorio)}")
+                subprocess.run(["certbot", "renew"])

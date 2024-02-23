@@ -9,7 +9,7 @@ Este script Bash automatiza a renovação de certificados Let's Encrypt que est�
 1. Clonar o repositório:
    
    ```
-   $ git clone https://github.com/NelioChume/Generate_SSL.git
+   $ git clone https://github.com/NelioChume/renovacao-certificado-ssl.git
    ```
 
 2. Aceda ao directório e dê permissão de execução ao arquivo:

@@ -15,7 +15,7 @@ Este script Bash automatiza a renovação de certificados Let's Encrypt que est�
 2. Aceda ao directório e dê permissão de execução ao arquivo:
    
    ```
-   $ cd /Generate_SSL
+   $ cd /renovacao-certificado-ssl
    ```
    
    ```

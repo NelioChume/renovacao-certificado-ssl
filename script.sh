@@ -3,8 +3,11 @@
 # Diretório onde os certificados Let's Encrypt estão localizados
 diretorio_letsencrypt="/etc/letsencrypt/live"
 
+# Diretório onde o script está localizado
+diretorio_script="$(dirname "$0")"
+
 # Arquivo de log
-log_file="/renovacao-certificado-ssl/log.log"
+log_file="$diretorio_script/logs.log"
 
 # Função para registrar mensagens no arquivo de log
 log() {

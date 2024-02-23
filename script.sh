@@ -1,30 +1,45 @@
-
 #!/bin/bash
-
-# Função para verificar a validade do certificado
-verificar_validade_certificado() {
-    caminho_certificado="$1"
-    data_fim=$(openssl x509 -enddate -noout -in "$caminho_certificado" | sed 's/notAfter=//')
-    data_fim=$(date -d"$data_fim" '+%b %d %H:%M:%S %Y %Z')
-    echo "$data_fim"
-}
 
 # Diretório onde os certificados Let's Encrypt estão localizados
 diretorio_letsencrypt="/etc/letsencrypt/live"
 
-# Obter todos os diretórios dentro de /etc/letsencrypt/live
-diretorios=$(ls "$diretorio_letsencrypt" | grep -E '.*\.org$')
+# Arquivo de log
+log_file="/renovacao-certificado-ssl/log.log"
+
+# Função para registrar mensagens no arquivo de log
+log() {
+    local message="$1"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $message" >> "$log_file"
+}
+
+# Função para verificar a validade do certificado
+verificar_validade_certificado() {
+    local caminho_certificado="$1"
+    local data_fim=$(openssl x509 -enddate -noout -in "$caminho_certificado" | sed 's/notAfter=//')
+    data_fim=$(date -d"$data_fim" '+%s')
+    local data_atual=$(date '+%s')
+    local dias_restantes=$((($data_fim - $data_atual) / 86400))
+    echo "$dias_restantes"
+}
+
+# Redirecionar saída para o arquivo de log
+exec > >(tee -a "$log_file")
+exec 2>&1
 
 # Loop através de cada diretório
-for diretorio in $diretorios; do
-    caminho_certificado="$diretorio_letsencrypt/$diretorio/fullchain.pem"
-    if [ -f "$caminho_certificado" ]; then
-        data_atual=$(date '+%Y-%m-%d %H:%M:%S')
-        data_fim_validade=$(verificar_validade_certificado "$caminho_certificado")
-        dias_restantes=$(($(($(date -d"$data_fim_validade" '+%s') - $(date -d"$data_atual" '+%s'))) / 86400))
-        if [ "$dias_restantes" -le 15 ]; then
-            echo "Renovando certificado em $diretorio_letsencrypt/$diretorio"
-            certbot renew
+for diretorio in "$diretorio_letsencrypt"/*; do
+    if [ -d "$diretorio" ]; then
+        caminho_certificado="$diretorio/fullchain.pem"
+        if [ -f "$caminho_certificado" ]; then
+            dias_restantes=$(verificar_validade_certificado "$caminho_certificado")
+            if [ "$dias_restantes" -le 15 ]; then
+                certbot renew
+                log "Certificado renovado em $diretorio"
+            else
+                log "Certificado em dia em $diretorio"
+            fi
+        else
+            log "Certificado não encontrado em $diretorio"
         fi
     fi
 done

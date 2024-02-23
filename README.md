@@ -19,13 +19,13 @@ Este script Bash automatiza a renovação de certificados Let's Encrypt que est�
    ```
    
    ```
-   $ sudo chmod +x renovar_certificados.sh
+   $ sudo chmod +x script.sh
    ```
 
 3. Execute o script:
    
    ```
-   $ ./renovar_certificados.sh
+   $ ./script.sh
    ```
    
    

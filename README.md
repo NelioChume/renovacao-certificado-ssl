@@ -28,6 +28,18 @@ Este script Bash automatiza a renovação de certificados Let's Encrypt que est�
    $ ./script.sh
    ```
    
+# Adicionar o script ao crontab para execução automática
+# Execute o seguinte comando para abrir o crontab no editor:
+
+ ```
+ $ sudo crontab -u root -e
+ ```
+
+# Adicione a seguinte linha ao final do arquivo para executar o script diariamente às 3 da manhã:
+# Substitua /caminho/para/script.sh pelo caminho completo para o scrip
+1 0 */15 * * /root/renovacao-certificado-ssl/script.sh >/dev/null 2>> /root/renovacao-certificado-ssl/cronjobs.log
+
+# Salve e feche o editor (geralmente pressionando "Ctrl + X", depois "Y" e "Enter")
    
 
 ## Requisitos:dart:

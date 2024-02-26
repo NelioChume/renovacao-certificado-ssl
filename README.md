@@ -36,11 +36,12 @@ Este script Bash automatiza a renovação de certificados Let's Encrypt que est�
  ```
 
 # Adicione a seguinte linha ao final do arquivo para executar o script diariamente às 3 da manhã:
-# Substitua /caminho/para/script.sh pelo caminho completo para o scrip
+# Substitua /caminho/renovacao-certificado-ssl/script.sh pelo caminho completo para o scrip
 1 0 */15 * * /root/renovacao-certificado-ssl/script.sh >/dev/null 2>> /root/renovacao-certificado-ssl/cronjobs.log
 
 # Salve e feche o editor (geralmente pressionando "Ctrl + X", depois "Y" e "Enter")
-   
+
+# Este cron agendará a execução do script script.sh localizado em /root/renovacao-certificado-ssl/ para ocorrer às 00:01 a cada 15 dias
 
 ## Requisitos:dart:
 

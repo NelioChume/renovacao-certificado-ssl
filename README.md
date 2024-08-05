@@ -1,6 +1,6 @@
 #  Renovação de Certificados Let's Encrypt
 
-Este script Bash automatiza a renovação de certificados Let's Encrypt que estão prestes a expirar. Ele verifica todos os diretórios dentro do diretório "/etc/letsencrypt/live" em busca de certificados com extensão ".org". Se um certificado estiver prestes a expirar (com menos de 15 dias de validade restantes), o script irá renová-lo utilizando o Certbot.....
+Este script Bash automatiza a renovação de certificados Let's Encrypt que estão prestes a expirar. Ele verifica todos os diretórios dentro do diretório "/etc/letsencrypt/live" em busca de certificados com extensão ".org". Se um certificado estiver prestes a expirar (com menos de 15 dias de validade restantes), o script irá renová-lo utilizando o Certbot.....,
 
 ## Instalação no Ubuntu Server:penguin:
 
